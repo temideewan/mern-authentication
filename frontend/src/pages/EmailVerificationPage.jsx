@@ -1,13 +1,15 @@
 import { motion } from 'framer-motion';
 import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useAuthStore } from '../store/authStore';
+import { toast } from 'sonner';
 
 const EmailVerificationPage = () => {
   const [code, setCode] = useState(['', '', '', '', '', '']);
   const inputRefs = useRef([]);
   const navigate = useNavigate();
+  const {error, isLoading, verifyEmail} = useAuthStore();
   const handleChange = (index, value) => {
-    console.log(value);
     const newCode = [...code];
     // handle pasted content
     if (value.length > 1) {
@@ -21,7 +23,6 @@ const EmailVerificationPage = () => {
       const focusedIndex = lastFilledIndex < 5 ? lastFilledIndex + 1 : 5;
       inputRefs.current[focusedIndex].focus();
     } else {
-      console.log('changed entry');
       newCode[index] = value;
       setCode(newCode);
 
@@ -36,13 +37,19 @@ const EmailVerificationPage = () => {
       inputRefs.current[index - 1].focus();
     }
   };
-  const isLoading = false;
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     // form submission logic here
     const verificationCode = code.join('');
-    console.log(`You submitted ${verificationCode}`);
+    try {
+      await verifyEmail(verificationCode);
+      navigate("/")
+      toast.success('Email verification successful!');
+    } catch (error) {
+      toast.error(error.message);
+      console.log(error);
+    }
   };
 
   // Auto submit when all fields are filled
@@ -78,6 +85,9 @@ const EmailVerificationPage = () => {
               />
             ))}
           </div>
+          {error && (
+            <p className='text-red-500 font-semibold mt-2'>{error}</p>
+          )}
           <motion.button
             className='auth-card-button'
             whileHover={{ scale: 1.02 }}
