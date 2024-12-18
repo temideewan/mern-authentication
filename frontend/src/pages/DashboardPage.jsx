@@ -2,7 +2,10 @@ import { motion } from 'framer-motion';
 import { useAuthStore } from '../store/authStore';
 import { formatDate } from '../../utils/date';
 export default function DashboardPage() {
-  const { user } = useAuthStore();
+  const { user,logout } = useAuthStore();
+  const handleLogout= () => {
+    logout();
+  }
   return (
     <motion.div
       initial={{ opacity: 0, scale: 0.9 }}
@@ -30,22 +33,41 @@ export default function DashboardPage() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.4 }}
-          >
-            <h3 className="text-xl font-semibold text-green-400 mb-3">Account Activity</h3>
-            <p className="text-gray-300">
-              <span className="font-bold">Joined: </span>
-              {new Date(user.createdAt).toLocaleDateString("en-US", {
-                year: "numeric",
-                month: "long",
-                day: "numeric"
-              })}
-            </p>
-            <p className="text-gray-300">
-              <span className="font-bold">Last Login: </span>
-              {user.lastLogin? formatDate(user.lastLogin): "You just signed up!" }
-            </p>
-          </motion.div>
+        >
+          <h3 className='text-xl font-semibold text-green-400 mb-3'>
+            Account Activity
+          </h3>
+          <p className='text-gray-300'>
+            <span className='font-bold'>Joined: </span>
+            {new Date(user.createdAt).toLocaleDateString('en-US', {
+              year: 'numeric',
+              month: 'long',
+              day: 'numeric',
+            })}
+          </p>
+          <p className='text-gray-300'>
+            <span className='font-bold'>Last Login: </span>
+            {user.lastLogin
+              ? formatDate(user.lastLogin)
+              : 'You just signed up!'}
+          </p>
+        </motion.div>
       </div>
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.6 }}
+        className='my-4'
+      >
+        <motion.button
+          whileTap={{ scale: 0.95 }}
+          whileHover={{ scale: 1.05 }}
+          className='w-full py-3 px-4 bg-gradient-to-r from-green-500 to-emerald-600 text-white font-bold rounded-lg shadow-lg hover:from-green-600 hover:to-emerald-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 focus:ring-offset-gray-900'
+          onClick={handleLogout}
+        >
+          Logout
+        </motion.button>
+      </motion.div>
     </motion.div>
   );
 }
