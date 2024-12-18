@@ -1,8 +1,9 @@
 import { motion } from 'framer-motion';
 import { useAuthStore } from '../store/authStore';
 import { formatDate } from '../../utils/date';
+import { Loader } from 'lucide-react';
 export default function DashboardPage() {
-  const { user,logout } = useAuthStore();
+  const { user,logout, isLoading } = useAuthStore();
   const handleLogout= () => {
     logout();
   }
@@ -65,7 +66,11 @@ export default function DashboardPage() {
           className='w-full py-3 px-4 bg-gradient-to-r from-green-500 to-emerald-600 text-white font-bold rounded-lg shadow-lg hover:from-green-600 hover:to-emerald-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 focus:ring-offset-gray-900'
           onClick={handleLogout}
         >
-          Logout
+          {isLoading ? (
+              <Loader className='size-6 animate-spin mx-auto' />
+            ) : (
+              'Logout'
+            )}
         </motion.button>
       </motion.div>
     </motion.div>
